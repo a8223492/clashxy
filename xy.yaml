@@ -1,1 +1,4 @@
 #xy.yaml
+payload:
+  - DOMAIN-SUFFIX,metacubex.one
+  - DOMAIN,chat.meatqiu.cn
