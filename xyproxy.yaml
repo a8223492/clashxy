@@ -4,3 +4,4 @@ payload:
   - DOMAIN-SUFFIX,anime1.me
   - DOMAIN-SUFFIX,pureapk.com
   - DOMAIN-SUFFIX,nexitallysafe.com
+  - IP-CIDR,9.9.9.9/32,no-resolve
