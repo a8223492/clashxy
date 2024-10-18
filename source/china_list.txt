@@ -1,0 +1,11 @@
+#apple
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleFirmware/AppleFirmware.yaml
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml
+#cloudflare-cn
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflarecn/Cloudflarecn.yaml
+#steam-cn
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/SteamCN/SteamCN.yaml
+#others
+https://cdn.jsdelivr.net/gh/a8223492/clashxy@master/Direct.yaml
+https://cdn.jsdelivr.net/gh/dler-io/Rules@master/Clash/Provider/Special.yaml
