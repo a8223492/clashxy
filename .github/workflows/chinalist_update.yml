@@ -1,44 +1,33 @@
-name: Update China List
+name: Update China Domain List
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天运行一次
+    - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 运行
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-  update:
+  update-domain-list:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 
-    - name: Download YAML files
+    - name: Install dependencies
       run: |
-        mkdir yaml_files
-        # 过滤掉注释行并下载有效链接
-        grep -v '^#' source/china_list.txt | sed '/^$/d' | while read -r url; do
-          if [ -n "$url" ]; then
-            echo "Downloading: $url"
-            curl -sSfL "$url" -o "yaml_files/$(basename "$url")" || echo "Failed to download: $url"
-          fi
-        done
+        python -m pip install --upgrade pip
+        pip install pyyaml requests
 
-    - name: Extract domains from YAML
-      run: |
-        python .github/scripts/rule_domain_parser.py
+    - name: Run domain list generator
+      run: python .github/scripts/rule_domain_parser.py
 
-    - name: Commit and push changes
+    - name: Commit and push if changed
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
         git add china.list
-        git commit -m "Update china.list"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update china.list [skip ci]" && git push)
