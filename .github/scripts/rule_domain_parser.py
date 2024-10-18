@@ -1,5 +1,6 @@
 import os
 import requests
+import sys
 
 def download_yaml_files(source_file, output_directory):
     if not os.path.exists(output_directory):
@@ -22,21 +23,9 @@ def download_yaml_files(source_file, output_directory):
                 except requests.RequestException as e:
                     print(f"Failed to download {line}: {e}")
 
-    print("\nDownloaded files and folder structure:")
-    for root, dirs, files in os.walk(output_directory):
-        level = root.replace(output_directory, '').count(os.sep)
-        indent = ' ' * 4 * level
-        print(f"{indent}{os.path.basename(root)}/")
-        sub_indent = ' ' * 4 * (level + 1)
-        for file in files:
-            print(f"{sub_indent}{file}")
-
-    print("\nContents of downloaded files:")
+    print("\nDownloaded files:")
     for filename in os.listdir(output_directory):
-        filepath = os.path.join(output_directory, filename)
-        print(f"\nFile: {filepath}")
-        with open(filepath, 'r') as file:
-            print(file.read())
+        print(f"- {filename}")
 
 def extract_domains_from_directory(directory, output_file):
     domains = set()
@@ -47,28 +36,25 @@ def extract_domains_from_directory(directory, output_file):
         if filename.endswith('.yaml'):
             filepath = os.path.join(directory, filename)
             print(f"\nProcessing file: {filepath}")
-            with open(filepath, 'r') as file:
-                for line in file:
-                    line = line.strip()
-                    if line.startswith('  - DOMAIN-SUFFIX,') or line.startswith('  - DOMAIN,'):
-                        print(f"Matched line: {line}")
-                        domain = line.split(',', 1)[1].strip()
-                        domains.add(domain)
+            try:
+                with open(filepath, 'r') as file:
+                    for line in file:
+                        line = line.strip()
+                        if line.startswith('  - DOMAIN-SUFFIX,') or line.startswith('  - DOMAIN,'):
+                            print(f"Matched line: {line}")
+                            domain = line.split(',', 1)[1].strip()
+                            domains.add(domain)
+            except Exception as e:
+                print(f"Error processing file {filepath}: {e}")
 
-    print("\nExtracted unique domains:")
-    for domain in sorted(domains):
-        print(domain)
+    print(f"\nExtracted {len(domains)} unique domains")
 
     with open(output_file, 'w') as file:
         for domain in sorted(domains):
             file.write(domain + '\n')
 
     print(f"\nGenerated domain list file: {output_file}")
-    print("Contents of the generated file:")
-    with open(output_file, 'r') as file:
-        print(file.read())
-
-    print(f"Extracted {len(domains)} unique domains")
+    print(f"Number of domains written: {len(domains)}")
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -84,9 +70,14 @@ if __name__ == "__main__":
 
     if not os.path.exists(source_file):
         print(f"Error: Source file {source_file} does not exist.")
-        exit(1)
+        sys.exit(1)
 
-    download_yaml_files(source_file, output_directory)
-    extract_domains_from_directory(output_directory, output_file)
+    try:
+        download_yaml_files(source_file, output_directory)
+        extract_domains_from_directory(output_directory, output_file)
+        print(f"Domain list has been generated and saved to {output_file}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        sys.exit(1)
 
-    print(f"Domain list has been generated and saved to {output_file}")
+    print("Script execution completed successfully.")
