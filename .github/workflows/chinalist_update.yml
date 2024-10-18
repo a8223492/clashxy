@@ -11,9 +11,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        repository: 'a8223492/clashxy'
+        path: 'clashxy'
 
     - name: Download YAML files and extract domains
       run: |
+        cd clashxy
+        
         # 步骤1：准备工作目录
         echo "Step 1: Preparing working directory"
         mkdir -p yaml_files
@@ -61,19 +66,19 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: china-list
-        path: china.list
+        path: clashxy/china.list
         retention-days: 5
 
     - name: Upload domain_suffix.txt as artifact
       uses: actions/upload-artifact@v3
       with:
         name: domain-suffix-list
-        path: domain_suffix.txt
+        path: clashxy/domain_suffix.txt
         retention-days: 5
 
     - name: Upload domain.txt as artifact
       uses: actions/upload-artifact@v3
       with:
         name: domain-list
-        path: domain.txt
+        path: clashxy/domain.txt
         retention-days: 5
