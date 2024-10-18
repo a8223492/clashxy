@@ -5,4 +5,5 @@ payload:
   - DOMAIN-SUFFIX,pureapk.com
   - DOMAIN-SUFFIX,nexitallysafe.com
   - DOMAIN-SUFFIX,ipify.org
+  - DOMAIN-SUFFIX,cursor.com
   - IP-CIDR,9.9.9.9/32,no-resolve
