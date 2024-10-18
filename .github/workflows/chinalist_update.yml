@@ -1,4 +1,4 @@
-name: Update Domain List
+name: Generate Domain List
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-  update-domain-list:
+  generate-domain-list:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -57,16 +57,23 @@ jobs:
         echo "Sample of china.list (first 10 lines):"
         head -n 10 china.list
 
-    - name: Commit and push if changed
-      run: |
-        echo "Checking for changes in china.list"
-        git config --global user.name 'GitHub Action'
-        git config --global user.email 'action@github.com'
-        git add china.list
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "Update china.list"
-          git push
-          echo "Changes pushed to repository"
-        fi
+    - name: Upload china.list as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: china-list
+        path: china.list
+        retention-days: 5
+
+    - name: Upload domain_suffix.txt as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: domain-suffix-list
+        path: domain_suffix.txt
+        retention-days: 5
+
+    - name: Upload domain.txt as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: domain-list
+        path: domain.txt
+        retention-days: 5
