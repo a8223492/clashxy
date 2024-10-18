@@ -1,12 +1,11 @@
 import os
-import re
 import requests
 
 def download_yaml_files(source_file, output_directory):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    with open(source_file, 'r', encoding='utf-8') as file:
+    with open(source_file, 'r') as file:
         for line in file:
             line = line.strip()
             if line and not line.startswith('#'):
@@ -15,25 +14,24 @@ def download_yaml_files(source_file, output_directory):
                     response = requests.get(line, timeout=30)
                     response.raise_for_status()
                     filename = os.path.join(output_directory, os.path.basename(line))
-                    with open(filename, 'w', encoding='utf-8') as yaml_file:
+                    with open(filename, 'w') as yaml_file:
                         yaml_file.write(response.text)
                 except requests.RequestException as e:
                     print(f"Failed to download {line}: {e}")
 
 def extract_domains_from_directory(directory, output_file):
     domains = set()
-    pattern = re.compile(r'^-\s*(DOMAIN-SUFFIX|DOMAIN),(.+)$')
 
     for filename in os.listdir(directory):
         if filename.endswith('.yaml'):
-            filepath = os.path.join(directory, filename)
-            with open(filepath, 'r', encoding='utf-8') as file:
+            with open(os.path.join(directory, filename), 'r') as file:
                 for line in file:
-                    match = pattern.match(line.strip())
-                    if match:
-                        domains.add(match.group(2).strip())
+                    line = line.strip()
+                    if line.startswith('  - DOMAIN-SUFFIX,') or line.startswith('  - DOMAIN,'):
+                        domain = line.split(',', 1)[1].strip()
+                        domains.add(domain)
 
-    with open(output_file, 'w', encoding='utf-8') as file:
+    with open(output_file, 'w') as file:
         for domain in sorted(domains):
             file.write(domain + '\n')
 
