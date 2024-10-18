@@ -21,8 +21,12 @@ jobs:
     - name: Download YAML files
       run: |
         mkdir yaml_files
-        grep -oP '(https?://[a-zA-Z0-9._~:/?#@!$&\'"()*+,;=%-]+)' source/china_list.txt | sed '/^$/d' | while read -r url; do
-          curl -sSfL "$url" -o "yaml_files/$(basename "$url")"
+        # 过滤掉注释行并下载有效链接
+        grep -v '^#' source/china_list.txt | sed '/^$/d' | while read -r url; do
+          if [ -n "$url" ]; then
+            echo "Downloading: $url"
+            curl -sSfL "$url" -o "yaml_files/$(basename "$url")" || echo "Failed to download: $url"
+          fi
         done
 
     - name: Extract domains from YAML
