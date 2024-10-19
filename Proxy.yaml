@@ -6,4 +6,6 @@ payload:
   - DOMAIN-SUFFIX,nexitallysafe.com
   - DOMAIN-SUFFIX,ipify.org
   - DOMAIN-SUFFIX,cursor.com
+  - DOMAIN-SUFFIX,xfastest.com
   - IP-CIDR,9.9.9.9/32,no-resolve
+  - IP-CIDR,8.8.4.4/32,no-resolve
